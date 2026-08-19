@@ -1,974 +1,225 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bed & Closet - Pastel Aura Living Space</title>
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Bed & Closet — Atelier Noir</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+  <style>
+    :root{--bg:#070606;--ivory:#efeae3;--muted:#9b9b9b;--accent:#c9b37a;--max-width:1200px}
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg),#0b0a0a);color:var(--ivory);font-family:Inter,system-ui,Arial}
+    header{position:fixed;left:0;right:0;top:0;height:78px;display:flex;align-items:center;padding:12px 20px;backdrop-filter:blur(6px);z-index:50}
+    .header-inner{max-width:var(--max-width);margin:0 auto;display:flex;align-items:center;justify-content:space-between;width:100%}
 
-        :root {
-            --primary-pink: #f5c4d9;
-            --primary-blue: #d4e8f0;
-            --primary-lavender: #e6d5f0;
-            --primary-mint: #d4efe5;
-            --accent-gold: #d4af84;
-            --dark-text: #2a2a2a;
-            --light-text: #6a6a6a;
-            --white: #ffffff;
-            --gradient-1: linear-gradient(135deg, #f5c4d9 0%, #e6d5f0 50%, #d4e8f0 100%);
-            --luxury-dark: #1a1a1a;
-            --luxury-bg: #f8f5f2;
-        }
+    main{margin-top:96px;max-width:var(--max-width);margin-left:auto;margin-right:auto;padding:20px;display:grid;grid-template-columns:1fr 420px;gap:24px;align-items:start}
 
-        html {
-            scroll-behavior: smooth;
-        }
+    .viewer-panel{border-radius:14px;overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,0.01),rgba(255,255,255,0.02));border:1px solid rgba(255,255,255,0.03);box-shadow:0 20px 60px rgba(0,0,0,0.6)}
+    #bedCanvas{width:100%;height:640px;display:block}
 
-        body {
-            font-family: 'Poppins', 'Segoe UI', sans-serif;
-            color: var(--dark-text);
-            background: linear-gradient(180deg, #f8f5f2 0%, #f2ede8 100%);
-            overflow-x: hidden;
-        }
+    .side-panel{position:sticky;top:110px;height:fit-content}
+    .card{background:linear-gradient(180deg,#0b0b0b,#0e0e0e);padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
+    .card h3{margin:0 0 8px 0;font-family:'Playfair Display'}
+    .controls{display:flex;flex-direction:column;gap:12px;margin-top:14px}
+    .control{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .control label{color:var(--muted);font-size:13px}
+    .zoom-controls{display:flex;flex-direction:column;gap:8px}
+    .zoom-controls button{padding:8px 12px;border-radius:8px;border:0;background:linear-gradient(90deg,var(--accent),#b79d55);color:#0b0a0a;font-weight:700;cursor:pointer}
+    .closet-list{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+    .closet-item{display:flex;gap:10px;align-items:center;justify-content:space-between}
+    .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:8px;border-radius:8px;color:var(--ivory);cursor:pointer}
 
-        /* ============ SOUND CONTROL ============ */
-        .sound-control {
-            position: fixed;
-            top: 30px;
-            right: 30px;
-            z-index: 10000;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            background: rgba(255, 255, 255, 0.98);
-            padding: 12px 18px;
-            border-radius: 50px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-            backdrop-filter: blur(10px);
-        }
+    .note{color:var(--muted);font-size:13px;margin-top:12px}
 
-        .sound-toggle {
-            width: 40px;
-            height: 40px;
-            border: none;
-            border-radius: 50%;
-            background: var(--primary-pink);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            transition: all 0.3s ease;
-            color: var(--white);
-        }
+    footer{padding:28px;text-align:center;color:var(--muted)}
 
-        .sound-toggle:hover {
-            transform: scale(1.1);
-            background: var(--accent-gold);
-        }
-
-        .volume-slider {
-            width: 100px;
-            height: 4px;
-            cursor: pointer;
-            accent-color: var(--accent-gold);
-        }
-
-        .volume-label {
-            font-size: 12px;
-            color: var(--light-text);
-            font-weight: 600;
-        }
-
-        /* ============ HEADER & NAVIGATION ============ */
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 9000;
-            background: rgba(248, 245, 242, 0.98);
-            backdrop-filter: blur(10px);
-            padding: 20px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
-        }
-
-        .logo {
-            font-size: 24px;
-            font-weight: 700;
-            background: var(--gradient-1);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-decoration: none;
-        }
-
-        nav {
-            display: flex;
-            gap: 40px;
-            align-items: center;
-        }
-
-        nav a {
-            text-decoration: none;
-            color: var(--dark-text);
-            font-weight: 500;
-            font-size: 15px;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        nav a::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--accent-gold);
-            transition: width 0.3s ease;
-        }
-
-        nav a:hover::after,
-        nav a.active::after {
-            width: 100%;
-        }
-
-        .cart-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--primary-mint);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 20px;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .cart-count {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: var(--primary-pink);
-            color: var(--white);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: 700;
-        }
-
-        /* ============ PAGE HEADER ============ */
-        .page-header {
-            margin-top: 100px;
-            padding: 60px 40px;
-            text-align: center;
-            background: linear-gradient(135deg, #2a2a2a 0%, #3a3a3a 50%, #2a2a2a 100%);
-            color: var(--white);
-        }
-
-        .page-header h1 {
-            font-size: 56px;
-            margin-bottom: 15px;
-            font-weight: 700;
-            letter-spacing: -1px;
-        }
-
-        .page-header p {
-            font-size: 18px;
-            opacity: 0.9;
-        }
-
-        /* ============ MAIN CONTENT ============ */
-        .content-wrapper {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 60px 40px;
-        }
-
-        .showcase-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 60px;
-            align-items: start;
-        }
-
-        .showcase-section h2 {
-            font-size: 32px;
-            margin-bottom: 20px;
-            color: var(--luxury-dark);
-            font-weight: 700;
-        }
-
-        .showcase-section p {
-            color: var(--light-text);
-            line-height: 1.8;
-            margin-bottom: 30px;
-            font-size: 15px;
-        }
-
-        /* ============ BED SECTION ============ */
-        .bed-container {
-            background: linear-gradient(135deg, rgba(248, 245, 242, 0.8) 0%, rgba(242, 237, 232, 0.8) 100%);
-            border: 2px solid rgba(212, 175, 132, 0.2);
-            border-radius: 30px;
-            padding: 40px;
-            margin-bottom: 30px;
-            position: relative;
-            min-height: 500px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
-        }
-
-        #bedCanvas {
-            width: 100%;
-            height: 500px;
-            border-radius: 20px;
-        }
-
-        .zoom-controls {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-            justify-content: center;
-        }
-
-        .zoom-btn {
-            padding: 12px 25px;
-            border: 2px solid var(--accent-gold);
-            background: transparent;
-            color: var(--dark-text);
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            font-size: 14px;
-        }
-
-        .zoom-btn:hover {
-            background: var(--accent-gold);
-            color: var(--white);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(212, 175, 132, 0.3);
-        }
-
-        /* ============ CLOSET SECTION ============ */
-        .closet-container {
-            background: linear-gradient(135deg, rgba(248, 245, 242, 0.8) 0%, rgba(242, 237, 232, 0.8) 100%);
-            border: 2px solid rgba(212, 175, 132, 0.2);
-            border-radius: 30px;
-            padding: 40px;
-            margin-bottom: 30px;
-            position: relative;
-            min-height: 500px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
-        }
-
-        #closetCanvas {
-            width: 100%;
-            height: 500px;
-            border-radius: 20px;
-        }
-
-        .closet-controls {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .control-btn {
-            padding: 12px;
-            border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 14px;
-        }
-
-        .control-btn.open {
-            background: var(--primary-mint);
-            color: var(--white);
-        }
-
-        .control-btn.open:hover {
-            background: #c2e8dc;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(212, 239, 229, 0.3);
-        }
-
-        .control-btn.close {
-            background: var(--primary-pink);
-            color: var(--white);
-        }
-
-        .control-btn.close:hover {
-            background: #f0a8c4;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(245, 196, 217, 0.3);
-        }
-
-        .control-btn.light {
-            background: var(--primary-lavender);
-            color: var(--white);
-            grid-column: 1 / -1;
-        }
-
-        .control-btn.light:hover {
-            background: #d9b8e8;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(230, 213, 240, 0.3);
-        }
-
-        .control-btn.active {
-            box-shadow: 0 8px 20px rgba(212, 175, 132, 0.4);
-        }
-
-        /* ============ FEATURES ============ */
-        .features-section {
-            margin-top: 60px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-        }
-
-        .feature-card {
-            background: var(--white);
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-            text-align: center;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(212, 175, 132, 0.1);
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.12);
-            border-color: var(--accent-gold);
-        }
-
-        .feature-icon {
-            font-size: 48px;
-            margin-bottom: 15px;
-        }
-
-        .feature-card h3 {
-            font-size: 18px;
-            margin-bottom: 12px;
-            color: var(--luxury-dark);
-            font-weight: 700;
-        }
-
-        .feature-card p {
-            font-size: 14px;
-            color: var(--light-text);
-            line-height: 1.6;
-        }
-
-        /* ============ FOOTER ============ */
-        footer {
-            background: linear-gradient(135deg, #2a2a2a 0%, #3a3a3a 50%, #2a2a2a 100%);
-            color: var(--white);
-            padding: 60px 40px;
-            margin-top: 80px;
-        }
-
-        .footer-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 40px;
-            margin-bottom: 40px;
-        }
-
-        .footer-section h3 {
-            font-size: 18px;
-            margin-bottom: 20px;
-            font-weight: 700;
-        }
-
-        .footer-section p, .footer-section a {
-            font-size: 14px;
-            line-height: 1.8;
-            opacity: 0.9;
-            text-decoration: none;
-            color: var(--white);
-            transition: opacity 0.3s ease;
-        }
-
-        .footer-section a:hover {
-            opacity: 1;
-            color: var(--accent-gold);
-        }
-
-        .footer-bottom {
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
-            padding-top: 30px;
-            text-align: center;
-            font-size: 14px;
-        }
-
-        /* ============ RESPONSIVE ============ */
-        @media (max-width: 1024px) {
-            .showcase-grid {
-                grid-template-columns: 1fr;
-                gap: 40px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            header {
-                flex-direction: column;
-                gap: 20px;
-                padding: 15px 20px;
-            }
-
-            nav {
-                flex-wrap: wrap;
-                gap: 15px;
-                justify-content: center;
-            }
-
-            .page-header h1 {
-                font-size: 36px;
-            }
-
-            .content-wrapper {
-                padding: 40px 20px;
-            }
-
-            .showcase-grid {
-                gap: 30px;
-            }
-
-            .showcase-section h2 {
-                font-size: 24px;
-            }
-
-            #bedCanvas, #closetCanvas {
-                height: 350px;
-            }
-
-            .sound-control {
-                top: 15px;
-                right: 15px;
-                gap: 10px;
-                padding: 8px 12px;
-            }
-        }
-    </style>
+    @media(max-width:980px){main{grid-template-columns:1fr;}.side-panel{position:relative;top:auto}}
+  </style>
 </head>
 <body>
-    <!-- Sound Control -->
-    <div class="sound-control">
-        <button class="sound-toggle" id="soundToggle" title="Toggle Sound">🔊</button>
-        <input type="range" min="0" max="100" value="50" class="volume-slider" id="volumeSlider">
-        <span class="volume-label" id="volumeLabel">50%</span>
+  <header>
+    <div class="header-inner">
+      <a class="brand" href="home.html" style="display:flex;gap:12px;align-items:center;text-decoration:none;color:var(--ivory)"><div style="width:44px;height:44px;border-radius:8px;background:linear-gradient(135deg,var(--accent),#8f7a44);display:grid;place-items:center;font-family:'Playfair Display'">AN</div><div style="font-family:'Playfair Display'">Atelier Noir</div></a>
+      <nav style="display:flex;gap:14px;align-items:center"><a href="home.html" style="color:var(--muted);text-decoration:none">Home</a><a href="collections.html" style="color:var(--muted);text-decoration:none">Collections</a><a href="showroom.html" style="color:var(--muted);text-decoration:none">3D Showroom</a></nav>
     </div>
+  </header>
 
-    <!-- Header -->
-    <header>
-        <a href="index.html" class="logo">✨ Pastel Aura</a>
-        <nav>
-            <a href="index.html">Home</a>
-            <a href="collections.html">Collections</a>
-            <a href="showroom.html">3D Showroom</a>
-            <a href="bed-closet.html" class="active">Bed & Closet</a>
-            <a href="story.html">Story</a>
-            <a href="contact.html">Contact</a>
-        </nav>
-        <div class="cart-icon" id="cartIcon">
-            🛒
-            <span class="cart-count" id="cartCount">0</span>
-        </div>
-    </header>
-
-    <!-- Page Header -->
-    <section class="page-header">
-        <h1>Luxury Bed & Premium Closet</h1>
-        <p>Experience the perfect blend of comfort and elegance with our interactive bedroom showcase</p>
+  <main>
+    <section class="viewer-panel">
+      <canvas id="bedCanvas" aria-label="3D bed and closet viewer"></canvas>
     </section>
 
-    <!-- Main Content -->
-    <div class="content-wrapper">
-        <div class="showcase-grid">
-            <!-- BED SECTION -->
-            <div>
-                <div class="showcase-section">
-                    <h2>🛏️ Luxury Bed</h2>
-                    <p>Experience ultimate luxury with our handcrafted premium bed frame. Featuring premium upholstered materials, elegant gold accents, and superior comfort engineering.</p>
-                </div>
-                <div class="bed-container">
-                    <canvas id="bedCanvas"></canvas>
-                </div>
-                <div class="zoom-controls">
-                    <button class="zoom-btn" onclick="zoomBedIn()">🔍 Zoom In</button>
-                    <button class="zoom-btn" onclick="zoomBedOut()">🔍 Zoom Out</button>
-                    <button class="zoom-btn" onclick="rotateBed()">🔄 Rotate</button>
-                </div>
-            </div>
+    <aside class="side-panel">
+      <div class="card">
+        <h3>Sol Bed — Centerpiece</h3>
+        <div class="note">A centered model with zoom controls placed beside the canvas for ergonomic access on all viewports.</div>
 
-            <!-- CLOSET SECTION -->
-            <div>
-                <div class="showcase-section">
-                    <h2>🚪 Premium Closet</h2>
-                    <p>Discover our luxury walk-in closet with premium shelving, spacious drawers, and ambient interior lighting. Organizes your wardrobe with elegance and sophistication.</p>
-                </div>
-                <div class="closet-container">
-                    <canvas id="closetCanvas"></canvas>
-                </div>
-                <div class="closet-controls">
-                    <button class="control-btn open" onclick="openCloset()">🔓 Open</button>
-                    <button class="control-btn close" onclick="closeCloset()">🔒 Close</button>
-                    <button class="control-btn light" onclick="toggleClosetLight()">💡 Toggle Light</button>
-                </div>
+        <div class="controls">
+          <div class="control">
+            <label>Zoom</label>
+            <div class="zoom-controls">
+              <input id="zoomRange" type="range" min="0.6" max="2.2" step="0.01" value="1">
+              <div style="display:flex;gap:8px"><button id="zoomIn">Zoom In</button><button id="zoomOut" class="btn-ghost">Zoom Out</button></div>
             </div>
+          </div>
+
+          <div class="control">
+            <label>Sound</label>
+            <div><button id="soundToggle">ON</button></div>
+          </div>
+
+          <div class="control">
+            <label>Closet Controls</label>
+            <div style="display:flex;flex-direction:column">
+              <div class="closet-list">
+                <div class="closet-item"><div>Left Door</div><button class="btn-ghost" data-action="toggle" data-target="left">Open</button></div>
+                <div class="closet-item"><div>Right Door</div><button class="btn-ghost" data-action="toggle" data-target="right">Open</button></div>
+                <div class="closet-item"><div>Drawers</div><button class="btn-ghost" data-action="toggle" data-target="drawers">Slide</button></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="control"><label>Auto rotate</label><input id="autoRotate" type="checkbox"></div>
         </div>
+      </div>
 
-        <!-- FEATURES SECTION -->
-        <div class="features-section">
-            <div class="feature-card">
-                <div class="feature-icon">🪑</div>
-                <h3>Premium Materials</h3>
-                <p>Hand-selected velvet, leather, and wood materials for ultimate luxury and durability.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">✨</div>
-                <h3>Gold Accents</h3>
-                <p>Elegant brass and gold details add a touch of sophistication to every piece.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">🎨</div>
-                <h3>Custom Design</h3>
-                <p>Personalize your bedroom with our exclusive pastel color palette and design options.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">💤</div>
-                <h3>Ultimate Comfort</h3>
-                <p>Ergonomic design ensures perfect support and relaxation for restful sleep.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">📦</div>
-                <h3>Smart Storage</h3>
-                <p>Intelligent closet design maximizes storage while maintaining aesthetic beauty.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">🌟</div>
-                <h3>Luxury Interior</h3>
-                <p>Premium interior lighting and ambient design create the perfect sanctuary.</p>
-            </div>
-        </div>
-    </div>
+      <div style="height:18px"></div>
+      <div class="card">
+        <h3>Materials</h3>
+        <div class="note">Oak frame • Bronze feet • Cashmere linens • Soft-close joinery</div>
+      </div>
+    </aside>
+  </main>
 
-    <!-- Footer -->
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>About Pastel Aura</h3>
-                <p>We create luxury furniture that combines timeless design with modern comfort, transforming spaces into personal sanctuaries.</p>
-            </div>
-            <div class="footer-section">
-                <h3>Quick Links</h3>
-                <a href="collections.html">Collections</a><br>
-                <a href="showroom.html">3D Showroom</a><br>
-                <a href="bed-closet.html">Bed & Closet</a><br>
-                <a href="story.html">Our Story</a>
-            </div>
-            <div class="footer-section">
-                <h3>Customer Service</h3>
-                <a href="contact.html">Contact Us</a><br>
-                <p>Email: hello@pastelauraliving.com<br>
-                Phone: +1 (555) 123-4567</p>
-            </div>
-            <div class="footer-section">
-                <h3>Follow Us</h3>
-                <p>
-                    <a href="#">Instagram</a><br>
-                    <a href="#">Pinterest</a><br>
-                    <a href="#">Facebook</a>
-                </p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2024 Pastel Aura Living Space. All rights reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
-        </div>
-    </footer>
+  <footer>Atelier Noir — bed &amp; closet experience · Crafted Interiors</footer>
 
-    <script>
-        // ============ SOUND SYSTEM ============
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        let soundEnabled = true;
-        let masterVolume = 0.5;
+  <script type="module">
+    import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.156.0/build/three.module.js';
+    import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.156.0/examples/jsm/controls/OrbitControls.js';
+    import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.156.0/examples/jsm/loaders/GLTFLoader.js';
 
-        const soundToggle = document.getElementById('soundToggle');
-        const volumeSlider = document.getElementById('volumeSlider');
-        const volumeLabel = document.getElementById('volumeLabel');
+    const canvas = document.getElementById('bedCanvas');
+    const renderer = new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
 
-        function playSound(frequency = 800, duration = 0.1, type = 'sine') {
-            if (!soundEnabled) return;
-            try {
-                const osc = audioContext.createOscillator();
-                const gain = audioContext.createGain();
-                osc.connect(gain);
-                gain.connect(audioContext.destination);
-                osc.frequency.value = frequency;
-                osc.type = type;
-                gain.gain.setValueAtTime(masterVolume * 0.3, audioContext.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
-                osc.start(audioContext.currentTime);
-                osc.stop(audioContext.currentTime + duration);
-            } catch (e) {
-                console.log('Audio playback limited by browser');
-            }
-        }
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(38,1,0.1,200);
+    camera.position.set(0,1.1,2.8);
 
-        soundToggle.addEventListener('click', () => {
-            soundEnabled = !soundEnabled;
-            soundToggle.textContent = soundEnabled ? '🔊' : '🔇';
-            if (soundEnabled) playSound(800, 0.1);
-        });
+    // Lights
+    const key = new THREE.DirectionalLight(0xfff7ec,1.15); key.position.set(2,4,2); scene.add(key);
+    const rim = new THREE.DirectionalLight(0xd8c79a,0.45); rim.position.set(-2,3,1); scene.add(rim);
+    const amb = new THREE.AmbientLight(0x222222,0.6); scene.add(amb);
 
-        volumeSlider.addEventListener('input', (e) => {
-            masterVolume = e.target.value / 100;
-            volumeLabel.textContent = e.target.value + '%';
-            playSound(600, 0.05);
-        });
+    // Ground
+    const ground = new THREE.Mesh(new THREE.PlaneGeometry(20,20), new THREE.MeshStandardMaterial({color:0x070606,roughness:0.18,metalness:0.05}));
+    ground.rotation.x = -Math.PI/2; ground.position.y = -0.35; ground.receiveShadow = true; scene.add(ground);
 
-        // ============ CART SYSTEM ============
-        let cart = JSON.parse(localStorage.getItem('cart')) || [];
-        const cartCount = document.getElementById('cartCount');
+    // Objects container
+    const group = new THREE.Group(); scene.add(group);
 
-        function updateCartCount() {
-            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
-            cartCount.textContent = count;
-        }
+    // Bed loader (attempt to load placeholder glb else fallback)
+    const loader = new GLTFLoader();
+    let bedRoot = null;
+    const BED_URL = './models/bed_preview.glb';
+    const CLOSET_URL = './models/closet_preview.glb';
 
-        // ============ THREE.JS - BED ============
-        let bedScene, bedCamera, bedRenderer;
-        let bedObject;
-        let bedZoomLevel = 1;
+    function createFallbackBed(){
+      const g = new THREE.Group();
+      const base = new THREE.Mesh(new THREE.BoxGeometry(1.9,0.12,1.5), new THREE.MeshStandardMaterial({color:0x141212,roughness:0.22,metalness:0.06}));
+      base.position.y = 0; g.add(base);
+      const mattress = new THREE.Mesh(new THREE.BoxGeometry(1.8,0.28,1.4), new THREE.MeshStandardMaterial({color:0x2c2624,roughness:0.48})); mattress.position.y = 0.22; g.add(mattress);
+      const head = new THREE.Mesh(new THREE.BoxGeometry(1.9,0.5,0.18), new THREE.MeshStandardMaterial({color:0x120f0f,roughness:0.35})); head.position.set(0,0.55,-0.66); g.add(head);
+      g.position.y = 0.02; return g;
+    }
 
-        function initBedScene() {
-            const canvas = document.getElementById('bedCanvas');
-            
-            bedScene = new THREE.Scene();
-            bedScene.background = new THREE.Color(0xf8f5f2);
-            bedScene.fog = new THREE.Fog(0xf8f5f2, 100, 10);
+    function createFallbackCloset(){
+      const g = new THREE.Group();
+      const body = new THREE.Mesh(new THREE.BoxGeometry(1.8,1.6,0.6), new THREE.MeshStandardMaterial({color:0x0f0d0d,roughness:0.55})); body.position.set(-2.6,0.8,0); g.add(body);
+      // left door
+      const left = new THREE.Mesh(new THREE.BoxGeometry(0.86,1.54,0.02), new THREE.MeshStandardMaterial({color:0x171616,roughness:0.38})); left.position.set(-2.6,0.8,-0.31); left.name='door_left'; g.add(left);
+      // right door
+      const right = left.clone(); right.position.set(-2.6,0.8,0.31); right.name='door_right'; g.add(right);
+      // drawers (group)
+      const drawers = new THREE.Group(); drawers.name='drawers';
+      for(let i=0;i<3;i++){ const d = new THREE.Mesh(new THREE.BoxGeometry(1.6,0.18,0.4), new THREE.MeshStandardMaterial({color:0x131212,roughness:0.4})); d.position.set(-2.6,0.5 - i*0.22,0); drawers.add(d); }
+      g.add(drawers);
+      return g;
+    }
 
-            bedCamera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
-            bedCamera.position.set(0, 0, 4);
+    // Load bed
+    loader.load(BED_URL, gltf=>{
+      bedRoot = gltf.scene || gltf.scenes[0];
+      const box = new THREE.Box3().setFromObject(bedRoot);
+      const size = box.getSize(new THREE.Vector3()); const maxDim = Math.max(size.x,size.y,size.z); const s=1.2/maxDim; bedRoot.scale.setScalar(s);
+      const center = box.getCenter(new THREE.Vector3()); bedRoot.position.sub(center); bedRoot.position.y = 0.05; group.add(bedRoot);
+    }, undefined, err=>{
+      // fallback
+      bedRoot = createFallbackBed(); group.add(bedRoot);
+    });
 
-            bedRenderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
-            bedRenderer.setSize(canvas.clientWidth, canvas.clientHeight);
-            bedRenderer.shadowMap.enabled = true;
+    // Load closet
+    let closetRoot = null;
+    loader.load(CLOSET_URL, gltf=>{
+      closetRoot = gltf.scene || gltf.scenes[0];
+      const box = new THREE.Box3().setFromObject(closetRoot); const size = box.getSize(new THREE.Vector3()); const maxDim = Math.max(size.x,size.y,size.z); const s=1.0/maxDim; closetRoot.scale.setScalar(s);
+      closetRoot.position.set(-2.6,0.01,0); group.add(closetRoot);
+    }, undefined, err=>{
+      closetRoot = createFallbackCloset(); group.add(closetRoot);
+    });
 
-            // Lighting
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
-            bedScene.add(ambientLight);
+    // Controls
+    const controls = new OrbitControls(camera, renderer.domElement); controls.enablePan=false; controls.enableDamping=true; controls.minPolarAngle=Math.PI/6; controls.maxPolarAngle=Math.PI/2.4; controls.minDistance=0.8; controls.maxDistance=6;
 
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-            directionalLight.position.set(5, 10, 7);
-            directionalLight.castShadow = true;
-            directionalLight.shadow.mapSize.width = 2048;
-            directionalLight.shadow.mapSize.height = 2048;
-            bedScene.add(directionalLight);
+    // Resize
+    function resize(){ const r=canvas.getBoundingClientRect(); renderer.setSize(Math.max(300,Math.floor(r.width)), Math.max(200,Math.floor(r.height)), false); camera.aspect = r.width / r.height; camera.updateProjectionMatrix(); }
+    new ResizeObserver(resize).observe(canvas);
 
-            // Floor
-            const floorGeometry = new THREE.PlaneGeometry(15, 15);
-            const floorMaterial = new THREE.MeshStandardMaterial({ color: 0xf8f5f2, metalness: 0.05, roughness: 0.8 });
-            const floor = new THREE.Mesh(floorGeometry, floorMaterial);
-            floor.rotation.x = -Math.PI / 2;
-            floor.position.y = -2;
-            floor.receiveShadow = true;
-            bedScene.add(floor);
+    // Animation loop
+    let last = performance.now(); let autoRotate=false; function render(now){ const dt=(now-last)/1000; last=now; if(autoRotate && bedRoot){ group.rotation.y += dt*0.12; } controls.update(); renderer.render(scene,camera); requestAnimationFrame(render); }
 
-            createLuxuryBed();
+    // UI bindings
+    document.getElementById('zoomRange').addEventListener('input',(e)=>{ const v=parseFloat(e.target.value); camera.position.set(0,1.1,2.8 / v); playUI('zoom'); });
+    document.getElementById('zoomIn').addEventListener('click',()=>{ const r=document.getElementById('zoomRange'); r.value = Math.max(parseFloat(r.min), parseFloat(r.value)-0.08); r.dispatchEvent(new Event('input')); });
+    document.getElementById('zoomOut').addEventListener('click',()=>{ const r=document.getElementById('zoomRange'); r.value = Math.min(parseFloat(r.max), parseFloat(r.value)+0.08); r.dispatchEvent(new Event('input')); });
 
-            function animateBed() {
-                requestAnimationFrame(animateBed);
-                if (bedObject) {
-                    bedObject.rotation.y += 0.003;
-                }
-                bedRenderer.render(bedScene, bedCamera);
-            }
-            animateBed();
+    // Auto rotate
+    document.getElementById('autoRotate').addEventListener('change',(e)=>{ autoRotate = e.target.checked; playUI('toggle'); });
 
-            window.addEventListener('resize', () => {
-                const width = canvas.clientWidth;
-                const height = canvas.clientHeight;
-                bedCamera.aspect = width / height;
-                bedCamera.updateProjectionMatrix();
-                bedRenderer.setSize(width, height);
-            });
-        }
+    // Closet open/close animations
+    function toggleDoor(target){ if(!closetRoot){ console.warn('closet not ready'); return; }
+      if(target==='left' || target==='door_left'){
+        const door = closetRoot.getObjectByName('door_left'); if(door){ const isOpen = door.userData.open; const to = isOpen ? 0 : -Math.PI/2.8; gsap.to(door.rotation, { y: to, duration:0.8, ease:'power3.inOut' }); door.userData.open = !isOpen; playUI('closet'); }
+      }
+      if(target==='right' || target==='door_right'){
+        const door = closetRoot.getObjectByName('door_right'); if(door){ const isOpen = door.userData.open; const to = isOpen ? 0 : Math.PI/2.8; gsap.to(door.rotation, { y: to, duration:0.8, ease:'power3.inOut' }); door.userData.open = !isOpen; playUI('closet'); }
+      }
+      if(target==='drawers'){
+        const drawers = closetRoot.getObjectByName('drawers'); if(drawers){ const isOpen = drawers.userData.extended; const amt = isOpen ? 0 : 0.26; drawers.children.forEach((d,i)=>{ gsap.to(d.position, { z: isOpen ? 0 : -amt-(i*0.02), duration:0.6, ease:'power3.out' }); }); drawers.userData.extended = !isOpen; playUI('drawer'); }
+      }
+    }
 
-        function createLuxuryBed() {
-            bedObject = new THREE.Group();
+    document.querySelectorAll('[data-action="toggle"]').forEach(b=>{ b.addEventListener('click',(e)=>{ const t=e.currentTarget.dataset.target; toggleDoor(t); }); });
 
-            // Base/Foundation
-            const baseGeometry = new THREE.BoxGeometry(3, 0.15, 2);
-            const baseMaterial = new THREE.MeshStandardMaterial({ color: 0x3d2817, metalness: 0.2, roughness: 0.7 });
-            const base = new THREE.Mesh(baseGeometry, baseMaterial);
-            base.position.y = -0.8;
-            base.castShadow = true;
-            bedObject.add(base);
+    // Audio engine
+    const AudioClass = window.AudioContext || window.webkitAudioContext; let audioCtx=null; let masterGain=null; let soundOn=true;
+    const soundToggle = document.getElementById('soundToggle'); soundToggle.addEventListener('click', async ()=>{ if(!audioCtx){ audioCtx = new AudioClass(); masterGain = audioCtx.createGain(); masterGain.gain.value = 0.6; masterGain.connect(audioCtx.destination); } soundOn = !soundOn; soundToggle.textContent = soundOn ? 'ON' : 'OFF'; playUI('toggle'); });
 
-            // Mattress
-            const mattressGeometry = new THREE.BoxGeometry(2.8, 0.3, 1.8);
-            const mattressMaterial = new THREE.MeshStandardMaterial({ color: 0xf5c4d9, metalness: 0.05, roughness: 0.8 });
-            const mattress = new THREE.Mesh(mattressGeometry, mattressMaterial);
-            mattress.position.y = -0.4;
-            mattress.castShadow = true;
-            bedObject.add(mattress);
+    function playUI(type){ if(!soundOn || !audioCtx) return; const t = audioCtx.currentTime; if(type==='toggle'){ const o=audioCtx.createOscillator(); const g=audioCtx.createGain(); o.type='sine'; o.frequency.setValueAtTime(520,t); g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(0.12,t+0.005); g.gain.exponentialRampToValueAtTime(0.0001,t+0.35); o.connect(g); g.connect(masterGain); o.start(t); o.stop(t+0.38); }
+      else if(type==='closet'){ const b = audioCtx.createBufferSource(); // synthesized wood-thud via oscillator
+        const o = audioCtx.createOscillator(); const g = audioCtx.createGain(); o.type='triangle'; o.frequency.setValueAtTime(110,t); g.gain.setValueAtTime(0.001,t); g.gain.linearRampToValueAtTime(0.12,t+0.01); g.gain.exponentialRampToValueAtTime(0.0001,t+0.5); o.connect(g); g.connect(masterGain); o.start(t); o.stop(t+0.45);
+      } else if(type==='drawer'){ const o = audioCtx.createOscillator(); const g=audioCtx.createGain(); o.type='sawtooth'; o.frequency.setValueAtTime(260,t); g.gain.setValueAtTime(0.001,t); g.gain.linearRampToValueAtTime(0.08,t+0.02); g.gain.exponentialRampToValueAtTime(0.0001,t+0.42); o.connect(g); g.connect(masterGain); o.start(t); o.stop(t+0.42); }
+      else if(type==='zoom'){ const o=audioCtx.createOscillator(); const g=audioCtx.createGain(); o.type='sawtooth'; o.frequency.setValueAtTime(260,t); const o2=audioCtx.createOscillator(); o2.type='sine'; o2.frequency.setValueAtTime(660,t); g.gain.setValueAtTime(0.001,t); g.gain.linearRampToValueAtTime(0.12,t+0.04); g.gain.exponentialRampToValueAtTime(0.0001,t+0.5); o.connect(g); o2.connect(g); g.connect(masterGain); o.start(t); o2.start(t); o.stop(t+0.5); o2.stop(t+0.5); }
+    }
 
-            // Pillows
-            for (let i = -1; i <= 1; i += 2) {
-                const pillowGeometry = new THREE.BoxGeometry(0.5, 0.3, 0.8);
-                const pillowMaterial = new THREE.MeshStandardMaterial({ color: 0xe6d5f0, metalness: 0, roughness: 0.9 });
-                const pillow = new THREE.Mesh(pillowGeometry, pillowMaterial);
-                pillow.position.set(i * 0.7, 0.1, -0.4);
-                pillow.castShadow = true;
-                bedObject.add(pillow);
-            }
+    // Start loop
+    requestAnimationFrame(render);
 
-            // Headboard
-            const headboardGeometry = new THREE.BoxGeometry(3, 1.2, 0.2);
-            const headboardMaterial = new THREE.MeshStandardMaterial({ color: 0xd4af84, metalness: 0.4, roughness: 0.5 });
-            const headboard = new THREE.Mesh(headboardGeometry, headboardMaterial);
-            headboard.position.set(0, 0.5, -0.9);
-            headboard.castShadow = true;
-            bedObject.add(headboard);
+    // Start audio context on interaction
+    window.addEventListener('pointerdown', async ()=>{ if(!audioCtx){ audioCtx = new AudioClass(); masterGain = audioCtx.createGain(); masterGain.gain.value = 0.6; masterGain.connect(audioCtx.destination); } if(audioCtx.state==='suspended') await audioCtx.resume(); }, {once:true});
 
-            // Bed frame legs
-            for (let x of [-1.2, 1.2]) {
-                for (let z of [-0.7, 0.7]) {
-                    const legGeometry = new THREE.BoxGeometry(0.12, 0.8, 0.12);
-                    const leg = new THREE.Mesh(legGeometry, baseMaterial);
-                    leg.position.set(x, -1.1, z);
-                    leg.castShadow = true;
-                    bedObject.add(leg);
-                }
-            }
-
-            bedScene.add(bedObject);
-        }
-
-        function zoomBedIn() {
-            playSound(600, 0.2);
-            bedZoomLevel = Math.min(bedZoomLevel + 0.3, 3);
-            bedCamera.position.z = 4 / bedZoomLevel;
-        }
-
-        function zoomBedOut() {
-            playSound(500, 0.2);
-            bedZoomLevel = Math.max(bedZoomLevel - 0.3, 0.5);
-            bedCamera.position.z = 4 / bedZoomLevel;
-        }
-
-        function rotateBed() {
-            playSound(700, 0.3);
-            if (bedObject) {
-                gsap.to(bedObject.rotation, { y: bedObject.rotation.y + Math.PI * 2, duration: 1 });
-            }
-        }
-
-        // ============ THREE.JS - CLOSET ============
-        let closetScene, closetCamera, closetRenderer;
-        let closetObject;
-        let closetDoorsOpen = false;
-        let closetLightOn = true;
-
-        function initClosetScene() {
-            const canvas = document.getElementById('closetCanvas');
-            
-            closetScene = new THREE.Scene();
-            closetScene.background = new THREE.Color(0xf8f5f2);
-            closetScene.fog = new THREE.Fog(0xf8f5f2, 100, 10);
-
-            closetCamera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
-            closetCamera.position.set(0, 0.5, 4);
-
-            closetRenderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
-            closetRenderer.setSize(canvas.clientWidth, canvas.clientHeight);
-            closetRenderer.shadowMap.enabled = true;
-
-            // Ambient Light
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-            closetScene.add(ambientLight);
-
-            // Interior Light
-            const interiorLight = new THREE.PointLight(0xffd699, 0.8);
-            interiorLight.position.set(0, 1.5, 0);
-            interiorLight.name = 'interiorLight';
-            closetScene.add(interiorLight);
-
-            // Directional Light
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.6);
-            directionalLight.position.set(5, 10, 7);
-            directionalLight.castShadow = true;
-            directionalLight.shadow.mapSize.width = 2048;
-            directionalLight.shadow.mapSize.height = 2048;
-            closetScene.add(directionalLight);
-
-            // Floor
-            const floorGeometry = new THREE.PlaneGeometry(15, 15);
-            const floorMaterial = new THREE.MeshStandardMaterial({ color: 0xf8f5f2, metalness: 0.05, roughness: 0.8 });
-            const floor = new THREE.Mesh(floorGeometry, floorMaterial);
-            floor.rotation.x = -Math.PI / 2;
-            floor.position.y = -2;
-            floor.receiveShadow = true;
-            closetScene.add(floor);
-
-            createLuxuryCloset();
-
-            function animateCloset() {
-                requestAnimationFrame(animateCloset);
-                closetRenderer.render(closetScene, closetCamera);
-            }
-            animateCloset();
-
-            window.addEventListener('resize', () => {
-                const width = canvas.clientWidth;
-                const height = canvas.clientHeight;
-                closetCamera.aspect = width / height;
-                closetCamera.updateProjectionMatrix();
-                closetRenderer.setSize(width, height);
-            });
-        }
-
-        function createLuxuryCloset() {
-            closetObject = new THREE.Group();
-
-            // Main cabinet body
-            const bodyGeometry = new THREE.BoxGeometry(2.5, 2.2, 0.6);
-            const bodyMaterial = new THREE.MeshStandardMaterial({ color: 0x3d2817, metalness: 0.2, roughness: 0.7 });
-            const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
-            body.position.y = 0.5;
-            body.castShadow = true;
-            closetObject.add(body);
-
-            // Left door
-            const doorGeometry = new THREE.BoxGeometry(1.2, 2, 0.08);
-            const doorMaterial = new THREE.MeshStandardMaterial({ color: 0x5a3d28, metalness: 0.3, roughness: 0.6 });
-            const leftDoor = new THREE.Mesh(doorGeometry, doorMaterial);
-            leftDoor.position.set(-0.7, 0.5, 0.34);
-            leftDoor.castShadow = true;
-            leftDoor.name = 'leftDoor';
-            closetObject.add(leftDoor);
-
-            // Right door
-            const rightDoor = new THREE.Mesh(doorGeometry, doorMaterial);
-            rightDoor.position.set(0.7, 0.5, 0.34);
-            rightDoor.castShadow = true;
-            rightDoor.name = 'rightDoor';
-            closetObject.add(rightDoor);
-
-            // Shelves inside
-            const shelfGeometry = new THREE.BoxGeometry(2.3, 0.08, 0.5);
-            const shelfMaterial = new THREE.MeshStandardMaterial({ color: 0x6b5344, metalness: 0.4, roughness: 0.5 });
-            
-            for (let i = 0; i < 5; i++) {
-                const shelf = new THREE.Mesh(shelfGeometry, shelfMaterial);
-                shelf.position.set(0, 0.2 + i * 0.35, -0.2);
-                shelf.castShadow = true;
-                closetObject.add(shelf);
-            }
-
-            // Drawers (simple representation)
-            const drawerGeometry = new THREE.BoxGeometry(2.3, 0.15, 0.4);
-            const drawerMaterial = new THREE.MeshStandardMaterial({ color: 0x8b6f47, metalness: 0.3, roughness: 0.6 });
-            
-            for (let i = 0; i < 3; i++) {
-                const drawer = new THREE.Mesh(drawerGeometry, drawerMaterial);
-                drawer.position.set(0, 1.8 - i * 0.22, -0.2);
-                drawer.castShadow = true;
-                closetObject.add(drawer);
-            }
-
-            // Door handles (gold accents)
-            const handleGeometry = new THREE.BoxGeometry(0.05, 0.2, 0.08);
-            const handleMaterial = new THREE.MeshStandardMaterial({ color: 0xd4af84, metalness: 0.8, roughness: 0.1 });
-            
-            for (let x of [-0.7, 0.7]) {
-                const handle = new THREE.Mesh(handleGeometry, handleMaterial);
-                handle.position.set(x, 0.5, 0.42);
-                closetObject.add(handle);
-            }
-
-            closetScene.add(closetObject);
-        }
-
-        function openCloset() {
-            playSound(450, 0.4, 'sine');
-            closetDoorsOpen = true;
-            
-            closetObject.children.forEach(child => {
-                if (child.name === 'leftDoor') {
-                    gsap.to(child.rotation, { z: -Math.PI / 2.5, duration: 0.6 });
-                } else if (child.name === 'rightDoor') {
-                    gsap.to(child.rotation, { z: Math.PI / 2.5, duration: 0.6 });
-                }
-            });
-            
-            playSound(600, 0.1);
-        }
-
-        function closeCloset() {
-            playSound(450, 0.4, 'sine');
-            closetDoorsOpen = false;
-            
-            closetObject.children.forEach(child => {
-                if (child.name === 'leftDoor' || child.name === 'rightDoor') {
-                    gsap.to(child.rotation, { z: 0, duration: 0.6 });
-                }
-            });
-            
-            playSound(600, 0.1);
-        }
-
-        function toggleClosetLight() {
-            playSound(700, 0.2);
-            closetLightOn = !closetLightOn;
-            
-            closetScene.children.forEach(child => {
-                if (child.name === 'interiorLight') {
-                    gsap.to(child, { intensity: closetLightOn ? 0.8 : 0.2, duration: 0.3 });
-                }
-            });
-        }
-
-        // ============ INITIALIZATION ============
-        document.addEventListener('DOMContentLoaded', () => {
-            updateCartCount();
-            initBedScene();
-            initClosetScene();
-        });
-    </script>
+  </script>
 </body>
 </html>

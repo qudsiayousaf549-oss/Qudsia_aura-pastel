@@ -1,2 +1,2 @@
-This is a placeholder file for the closet preview model.
-Replace this file with your optimized GLB at models/closet_preview.glb
+This is a placeholder for an optimized closet GLB.
+Replace with models/closet_preview.glb for the closet on the Bed & Closet page.

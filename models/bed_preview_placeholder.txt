@@ -1,0 +1,2 @@
+This is a placeholder for an optimized bed GLB.
+Replace with models/bed_preview.glb for the bed on the Bed & Closet page.
