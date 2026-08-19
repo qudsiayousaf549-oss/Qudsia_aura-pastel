@@ -1,0 +1,1 @@
+This is a placeholder for product 1 model. Replace with optimized GLB at models/product1.glb
