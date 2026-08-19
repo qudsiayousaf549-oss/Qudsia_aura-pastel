@@ -1,0 +1,752 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Designed for Luxury. Crafted for Living. — Atelier Noir</title>
+
+  <!-- Premium fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+
+  <!-- Three.js as ES Module (will be imported by the inline module script) -->
+  <style>
+    :root{
+      --bg:#070606;
+      --panel:#0f0f0f;
+      --muted:#9b9b9b;
+      --ivory:#efeae3;
+      --accent:#c9b37a; /* champagne/gold */
+      --glass: rgba(255,255,255,0.03);
+      --glass-2: rgba(255,255,255,0.02);
+      --max-width:1200px;
+    }
+    html,body{
+      height:100%;
+      margin:0;
+      background:linear-gradient(180deg,var(--bg) 0%, #0b0a0a 100%);
+      color:var(--ivory);
+      font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      overflow-y: auto;
+    }
+
+    /* Page layout */
+    .site {
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+    }
+
+    header {
+      position:fixed;
+      top:0;
+      left:0;
+      right:0;
+      height:78px;
+      z-index:50;
+      display:flex;
+      align-items:center;
+      padding:18px 28px;
+      backdrop-filter: blur(6px) saturate(120%);
+      background: linear-gradient(180deg, rgba(7,6,6,0.42) 0%, rgba(7,6,6,0.15) 100%);
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .nav-inner{
+      margin:0 auto;
+      width:100%;
+      max-width:var(--max-width);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:24px;
+    }
+    .brand {
+      display:flex;
+      align-items:center;
+      gap:12px;
+      cursor:pointer;
+      text-decoration:none;
+      color:var(--ivory);
+    }
+    .logo-mark{
+      width:46px;
+      height:46px;
+      background:linear-gradient(135deg,var(--accent), #8f7a44);
+      border-radius:8px;
+      box-shadow:0 6px 24px rgba(201,179,122,0.09), inset 0 -6px 16px rgba(0,0,0,0.25);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-family: 'Playfair Display', serif;
+      font-weight:700;
+      color:#0b0a0a;
+      font-size:18px;
+      letter-spacing:0.04em;
+    }
+    .brand h1{
+      margin:0;
+      font-family:'Playfair Display', serif;
+      font-weight:600;
+      font-size:18px;
+      letter-spacing:0.06em;
+    }
+    nav{
+      display:flex;
+      gap:18px;
+      align-items:center;
+    }
+    nav a{
+      color:var(--muted);
+      text-decoration:none;
+      font-weight:600;
+      font-size:14px;
+      padding:10px 12px;
+      border-radius:6px;
+    }
+    nav a:hover{
+      color:var(--ivory);
+      background:var(--glass);
+      transform:translateY(-2px);
+      transition:all 220ms ease;
+    }
+
+    /* Hero */
+    .hero {
+      width:100%;
+      margin-top:110px;
+      margin-bottom:80px;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      padding:40px 20px;
+    }
+    .hero-inner{
+      width:100%;
+      max-width:var(--max-width);
+      display:grid;
+      grid-template-columns: 1fr 620px;
+      gap:48px;
+      align-items:center;
+    }
+    .hero-copy{
+      padding:40px 30px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));
+      border-radius:14px;
+      border: 1px solid rgba(255,255,255,0.03);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    }
+    .eyebrow{
+      color:var(--muted);
+      font-size:13px;
+      letter-spacing:0.18em;
+      text-transform:uppercase;
+      margin-bottom:18px;
+    }
+    .title{
+      font-family:'Playfair Display', serif;
+      font-size:48px;
+      margin:0 0 16px 0;
+      line-height:1.02;
+      color:var(--ivory);
+      letter-spacing: -0.02em;
+    }
+    .subtitle{
+      color:var(--muted);
+      font-size:16px;
+      margin-bottom:26px;
+      max-width:60ch;
+    }
+    .actions{
+      display:flex;
+      gap:14px;
+      align-items:center;
+    }
+    .btn{
+      -webkit-appearance:none;
+      appearance:none;
+      border:0;
+      cursor:pointer;
+      padding:12px 18px;
+      font-weight:700;
+      border-radius:10px;
+      color:#0b0a0a;
+      background:linear-gradient(90deg,var(--accent), #b79d55);
+      box-shadow: 0 8px 30px rgba(199,164,95,0.12), inset 0 -6px 18px rgba(0,0,0,0.18);
+      transform-origin:center;
+    }
+    .btn.ghost{
+      background:transparent;
+      color:var(--ivory);
+      border:1px solid rgba(255,255,255,0.06);
+      padding:12px 18px;
+    }
+    .micro{
+      display:flex;
+      gap:12px;
+      margin-top:18px;
+      align-items:center;
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    /* 3D canvas panel */
+    .viewer-panel{
+      height:640px;
+      border-radius:16px;
+      overflow:hidden;
+      position:relative;
+      border:1px solid rgba(255,255,255,0.03);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6), inset 0 -6px 24px rgba(0,0,0,0.6);
+      background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));
+    }
+    #three-canvas{
+      width:100%;
+      height:100%;
+      display:block;
+      background:linear-gradient(180deg, rgba(0,0,0,0.5), rgba(0,0,0,0.55));
+    }
+
+    /* Controls UI */
+    .viewer-ui {
+      position:absolute;
+      right:18px;
+      bottom:18px;
+      display:flex;
+      gap:12px;
+      z-index:20;
+      align-items:center;
+    }
+    .control {
+      background:var(--glass-2);
+      border:1px solid rgba(255,255,255,0.03);
+      padding:10px;
+      border-radius:10px;
+      color:var(--ivory);
+      font-size:13px;
+      display:flex;
+      gap:8px;
+      align-items:center;
+      backdrop-filter: blur(4px);
+    }
+    .control .icon{
+      width:36px;
+      height:36px;
+      display:inline-grid;
+      place-items:center;
+      border-radius:8px;
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border:1px solid rgba(255,255,255,0.02);
+    }
+    .zoom-range{
+      width:120px;
+    }
+    .sound-control{
+      display:flex;
+      gap:6px;
+      align-items:center;
+    }
+
+    /* Loading overlay */
+    .loading {
+      position:fixed;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:200;
+      background:linear-gradient(180deg, rgba(7,6,6,0.92), rgba(7,6,6,0.9));
+      color:var(--ivory);
+      flex-direction:column;
+      gap:18px;
+    }
+    .loader-bar{
+      width:240px;
+      height:8px;
+      background:rgba(255,255,255,0.04);
+      border-radius:8px;
+      overflow:hidden;
+    }
+    .loader-fill{
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg,var(--accent), #b79d55);
+      border-radius:8px;
+      box-shadow:0 6px 26px rgba(199,164,95,0.14);
+    }
+    .loader-text{
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    /* Footer */
+    footer{
+      margin-top:auto;
+      padding:36px 20px;
+      color:var(--muted);
+      text-align:center;
+    }
+
+    /* Responsive */
+    @media (max-width:1100px){
+      .hero-inner{
+        grid-template-columns: 1fr 1fr;
+      }
+      .viewer-panel{ height:520px; }
+      .title{ font-size:40px; }
+    }
+    @media (max-width:880px){
+      .hero-inner{
+        grid-template-columns:1fr;
+      }
+      .viewer-panel{ height:420px; margin-top:22px; }
+      header{ padding:12px 16px; height:72px; }
+    }
+    @media (max-width:420px){
+      .title{ font-size:28px; }
+      .hero-copy{ padding:22px; }
+      .viewer-ui{ flex-direction:column; right:10px; bottom:10px; }
+    }
+
+    /* wishlist heart */
+    .wishlist {
+      display:inline-grid;
+      grid-auto-flow:column;
+      grid-gap:8px;
+      align-items:center;
+    }
+    .heart {
+      width:44px;
+      height:44px;
+      display:inline-grid;
+      place-items:center;
+      border-radius:10px;
+      background:transparent;
+      border:1px solid rgba(255,255,255,0.03);
+      cursor:pointer;
+    }
+    .heart svg { fill:transparent; stroke:var(--ivory); stroke-width:1.5; transition:all 240ms ease; }
+    .heart.active { background:linear-gradient(90deg,#371f12, rgba(201,179,122,0.06)); border-color: rgba(201,179,122,0.12); }
+    .heart.active svg { fill:var(--accent); stroke:transparent; transform:scale(1.06); }
+  </style>
+</head>
+<body>
+  <div class="site">
+    <!-- Loading overlay -->
+    <div class="loading" id="loading">
+      <div style="display:flex;align-items:center;gap:14px">
+        <div style="width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#8f7a44);display:grid;place-items:center;font-family:'Playfair Display';font-weight:700;color:#0a0808">AN</div>
+        <div style="text-align:left">
+          <div style="font-size:18px;font-weight:700">Atelier Noir</div>
+          <div style="color:var(--muted);font-size:13px;margin-top:3px">Curated craftsmanship — loading luxury</div>
+        </div>
+      </div>
+      <div class="loader-bar" style="margin-top:20px">
+        <div class="loader-fill" id="loaderFill"></div>
+      </div>
+      <div class="loader-text" id="loaderText">Preparing immersive scene...</div>
+    </div>
+
+    <!-- Header -->
+    <header>
+      <div class="nav-inner">
+        <a class="brand" href="home.html" id="brandLink" aria-label="Atelier Noir — home">
+          <div class="logo-mark">AN</div>
+          <h1>Atelier Noir</h1>
+        </a>
+
+        <nav aria-label="Primary navigation">
+          <a href="home.html">Home</a>
+          <a href="collections.html">Collections</a>
+          <a href="showroom.html">3D Showroom</a>
+          <a href="bed-closet.html">Bed &amp; Closet</a>
+          <a href="our-story.html">Our Story</a>
+          <a href="contact.html">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Hero -->
+    <main class="hero" role="main">
+      <div class="hero-inner">
+        <section class="hero-copy" aria-labelledby="heroTitle">
+          <div class="eyebrow">Exclusive • Bespoke • Eternal</div>
+          <h2 class="title" id="heroTitle">Designed for Luxury. Crafted for Living.</h2>
+          <p class="subtitle">Handcrafted compositions of noble materials — curated for modern interiors. Explore refined proportion, tactile textiles, and finishes that age with grace.</p>
+
+          <div class="actions">
+            <button class="btn" id="ctaExplore">Explore Collections</button>
+            <button class="btn ghost" id="ctaShowroom">Enter Showroom</button>
+            <div style="flex:1"></div>
+            <div class="wishlist" title="Add to wishlist">
+              <button class="heart" id="wishlistBtn" aria-pressed="false" aria-label="Add to wishlist">
+                <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 21s-7-4.4-9-7.1C0.9 10.6 4.1 6 8.5 6c1.9 0 3.4.9 3.5 1 0.1-.1 1.6-1 3.5-1C19.9 6 23.1 10.6 21 13.9 19 16.6 12 21 12 21z"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="micro">
+            <div style="display:flex;gap:12px;align-items:center">
+              <div style="width:12px;height:12px;border-radius:50%;background:var(--accent)"></div>
+              <div><strong style="color:var(--ivory)">Bespoke materials</strong> — oak, bronze & cashmere</div>
+            </div>
+            <div style="margin-left:8px;color:var(--muted)">•</div>
+            <div>Free consultation • Worldwide delivery</div>
+          </div>
+        </section>
+
+        <!-- Viewer panel -->
+        <aside class="viewer-panel" aria-label="3D product viewer">
+          <canvas id="three-canvas" aria-hidden="true"></canvas>
+
+          <!-- UI Controls overlay -->
+          <div class="viewer-ui" role="toolbar" aria-label="Viewer controls">
+            <div class="control" title="Auto rotate">
+              <div class="icon">⤾</div>
+              <label style="display:flex;flex-direction:column">
+                <small style="color:var(--muted);font-size:12px">Rotate</small>
+                <input id="autoRotateSwitch" type="checkbox" aria-label="Auto rotate" />
+              </label>
+            </div>
+
+            <div class="control" title="Zoom">
+              <div class="icon">🔍</div>
+              <input id="zoomRange" class="zoom-range" type="range" min="0.5" max="2.0" step="0.01" value="1" aria-label="Zoom" />
+            </div>
+
+            <div class="control sound-control" title="Sound">
+              <div class="icon">🔊</div>
+              <label style="display:flex;flex-direction:column">
+                <small style="color:var(--muted);font-size:12px">Sound</small>
+                <div style="display:flex;gap:8px;align-items:center">
+                  <button id="soundToggle" aria-pressed="true" style="background:transparent;border:0;color:var(--ivory);cursor:pointer">ON</button>
+                  <input id="volumeRange" type="range" min="0" max="1" step="0.01" value="0.6" style="width:72px" aria-label="Volume" />
+                </div>
+              </label>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </main>
+
+    <footer>
+      © <span id="year"></span> Atelier Noir — Crafted Interiors · <span style="color:var(--muted)">Privacy</span> · <span style="color:var(--muted)">Terms</span>
+    </footer>
+
+  </div>
+
+  <!-- Inline module script to import three.js modules -->
+  <script type="module">
+    // Imports
+    import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.156.0/build/three.module.js';
+    import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.156.0/examples/jsm/loaders/GLTFLoader.js';
+    import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.156.0/examples/jsm/controls/OrbitControls.js';
+    import { RoomEnvironment } from 'https://cdn.jsdelivr.net/npm/three@0.156.0/examples/jsm/environments/RoomEnvironment.js';
+    import { RoughnessMipmapper } from 'https://cdn.jsdelivr.net/npm/three@0.156.0/examples/jsm/utils/RoughnessMipmapper.js';
+    // Note: You can swap the imported model URL to a high-quality glTF/GLB model hosted on your CDN.
+    // For production, use a high-res glb with packed PBR materials and an HDRI environment for photorealism.
+
+    // Scene & renderer
+    const canvas = document.getElementById('three-canvas');
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.physicallyCorrectLights = true;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.0;
+
+    const scene = new THREE.Scene();
+
+    // Camera
+    const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 200);
+    camera.position.set(0, 0.9, 2.6);
+
+    // Environment
+    const pmremGenerator = new THREE.PMREMGenerator(renderer);
+    pmremGenerator.compileEquirectangularShader();
+
+    const env = new RoomEnvironment();
+    const envMap = pmremGenerator.fromScene(env).texture;
+    scene.environment = envMap;
+    scene.background = null;
+
+    // Lights - cinematic key + rim + warm fill
+    const key = new THREE.DirectionalLight(0xfff7ec, 1.2);
+    key.position.set(2.4, 6.4, 4);
+    key.castShadow = true;
+    key.shadow.radius = 6;
+    key.shadow.mapSize.set(2048,2048);
+    scene.add(key);
+
+    const fill = new THREE.DirectionalLight(0xb0a496, 0.4);
+    fill.position.set(-2, 1, -3);
+    scene.add(fill);
+
+    const rim = new THREE.DirectionalLight(0xd8c79a, 0.54);
+    rim.position.set(-1.6, 2.8, 3.6);
+    scene.add(rim);
+
+    // Ground reflective plane (simple glossy)
+    const groundMat = new THREE.MeshStandardMaterial({
+      color: 0x0a0a0a,
+      roughness: 0.12,
+      metalness: 0.07,
+      envMap: scene.environment,
+      envMapIntensity: 0.8
+    });
+    const ground = new THREE.Mesh(new THREE.PlaneGeometry(50,50), groundMat);
+    ground.rotation.x = -Math.PI/2;
+    ground.position.y = -0.35;
+    ground.receiveShadow = true;
+    scene.add(ground);
+
+    // Container for product
+    const product = new THREE.Group();
+    scene.add(product);
+
+    // Function to create a premium-looking fallback chair/sofa (used if no external model)
+    function createFallbackLuxuryPiece(){
+      const g = new THREE.Group();
+
+      // base platform
+      const baseGeom = new THREE.BoxGeometry(1.8, 0.12, 0.82);
+      const baseMat = new THREE.MeshStandardMaterial({ color:0x141212, roughness:0.25, metalness:0.14, envMap:scene.environment });
+      const base = new THREE.Mesh(baseGeom, baseMat);
+      base.position.y = 0;
+      base.castShadow = true;
+      base.receiveShadow = true;
+      base.scale.set(1,1,1);
+      base.rotation.y = 0.02;
+      g.add(base);
+
+      // cushions - three
+      const cushionMat = new THREE.MeshStandardMaterial({ color:0x3a2f2b, roughness:0.45, metalness:0.02, envMap:scene.environment });
+      const cushionGeom = new THREE.BoxGeometry(0.5, 0.28, 0.7);
+      const offsets = [-0.52, 0, 0.52];
+      offsets.forEach((x,i)=>{
+        const c = new THREE.Mesh(cushionGeom, cushionMat);
+        c.position.set(x, 0.25, 0);
+        c.rotation.set(0.03*(i-1), 0.08*(i-1), 0.02);
+        c.castShadow = true;
+        c.receiveShadow = true;
+        g.add(c);
+      });
+
+      // armrests
+      const armMat = new THREE.MeshStandardMaterial({ color:0x120f0f, roughness:0.22, metalness:0.12, envMap:scene.environment });
+      const armGeom = new THREE.BoxGeometry(0.24,0.5,0.82);
+      const leftArm = new THREE.Mesh(armGeom, armMat);
+      leftArm.position.set(-1.04, 0.22, 0);
+      leftArm.castShadow = true;
+      g.add(leftArm);
+      const rightArm = leftArm.clone();
+      rightArm.position.x = 1.04;
+      g.add(rightArm);
+
+      // bronze legs
+      const legMat = new THREE.MeshStandardMaterial({ color:0x6e4b2e, roughness:0.18, metalness:1.0, envMap:scene.environment });
+      for(let i=0;i<4;i++){
+        const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.04,0.04,0.28,24), legMat);
+        leg.position.set((i<2?-0.72:0.72), -0.18, (i%2? -0.35:0.35));
+        g.add(leg);
+      }
+
+      g.scale.set(1.2,1.2,1.2);
+      g.position.y = 0.05;
+      return g;
+    }
+
+    // GLTF loader
+    const loader = new GLTFLoader();
+
+    // Replace this URL with your high-quality furniture glb hosted on your server/CDN:
+    const MODEL_URL = './models/sofa.glb'; // <-- Replace in production
+
+    // Load promise wrapper
+    function loadModel(url){
+      return new Promise((resolve, reject) => {
+        loader.load(url, gltf => resolve(gltf), xhr => {
+          const percent = xhr.loaded / (xhr.total || xhr.loaded) * 100;
+          updateLoader(percent, 'Loading model...');
+        }, err => reject(err));
+      });
+    }
+
+    // Progress UI
+    const loaderFill = document.getElementById('loaderFill');
+    const loaderText = document.getElementById('loaderText');
+    function updateLoader(pct, text){
+      loaderFill.style.width = Math.min(100,Math.round(pct)) + '%';
+      loaderText.textContent = text || 'Preparing immersive scene...';
+    }
+
+    // Initialize scene: attempt to load model, otherwise fallback
+    let loadedModel = null;
+    async function initScene(){
+      try{
+        updateLoader(12, 'Preparing environment...');
+        // if model path exists on server, change MODEL_URL to actual path
+        const gltf = await loadModel(MODEL_URL);
+        updateLoader(78, 'Applying materials and finishing...');
+        // Center model
+        const root = gltf.scene || gltf.scenes[0];
+        // Normalize scale
+        const box = new THREE.Box3().setFromObject(root);
+        const size = new THREE.Vector3();
+        box.getSize(size);
+        const maxDim = Math.max(size.x, size.y, size.z);
+        const scale = 1.4 / maxDim;
+        root.scale.setScalar(scale);
+        // Recompute box after scaling
+        const box2 = new THREE.Box3().setFromObject(root);
+        const center = box2.getCenter(new THREE.Vector3());
+        root.position.sub(center);
+        root.position.y += 0.05;
+        root.traverse((n)=>{ if(n.isMesh){ n.castShadow = true; n.receiveShadow = true; }});
+        product.add(root);
+        loadedModel = root;
+        updateLoader(92, 'Optimizing for rendering...');
+        setTimeout(()=>{ finishLoading(); }, 600);
+      }catch(e){
+        // fallback rendering
+        console.warn('Model load failed, using fallback piece.', e);
+        updateLoader(28, 'Using optimized fallback asset...');
+        const fallback = createFallbackLuxuryPiece();
+        product.add(fallback);
+        loadedModel = fallback;
+        setTimeout(()=>{ finishLoading(); }, 500);
+      }
+    }
+
+    function finishLoading(){
+      updateLoader(100, 'Ready');
+      gsap.to('.loader-fill', { width:'100%', duration:0.8, ease:'power2.out' });
+      gsap.to('#loading', { autoAlpha:0, y:-20, duration:0.8, delay:0.3, onComplete:()=>{ document.getElementById('loading').style.display='none'; } });
+    }
+
+    // Camera controls & interaction
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.enablePan = false;
+    controls.minPolarAngle = Math.PI/6;
+    controls.maxPolarAngle = Math.PI/2.25;
+    controls.minDistance = 1.0;
+    controls.maxDistance = 6;
+
+    // Responsive resize
+    function resize(){
+      const rect = canvas.getBoundingClientRect();
+      const w = Math.max(300, Math.floor(rect.width));
+      const h = Math.max(200, Math.floor(rect.height));
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h, false);
+    }
+    new ResizeObserver(resize).observe(canvas);
+
+    // Animation loop
+    let last = performance.now();
+    let autoRotate = false;
+    function animate(now){
+      const dt = (now - last) / 1000;
+      last = now;
+      if(autoRotate && loadedModel){
+        product.rotation.y += dt * 0.25; // slow rotation
+      }
+      controls.update();
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    }
+
+    // UI bindings
+    document.getElementById('autoRotateSwitch').addEventListener('change', (e)=>{ autoRotate = e.target.checked; playUI('toggle'); });
+    const zoomRange = document.getElementById('zoomRange');
+    zoomRange.addEventListener('input', (e)=>{ const v = parseFloat(e.target.value); camera.position.set(0, 0.9, 2.6 / v); playUI('zoom'); });
+
+    // Simple Audio engine (synthesized cinematic hits)
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    const audioCtx = new AudioContextClass();
+    let masterGain = audioCtx.createGain();
+    masterGain.gain.value = 0.6;
+    masterGain.connect(audioCtx.destination);
+    let soundOn = true;
+
+    document.getElementById('soundToggle').addEventListener('click', async ()=>{
+      // resume context if suspended (user gesture)
+      if(audioCtx.state === 'suspended') await audioCtx.resume();
+      soundOn = !soundOn;
+      document.getElementById('soundToggle').textContent = soundOn ? 'ON' : 'OFF';
+      document.getElementById('soundToggle').setAttribute('aria-pressed', String(soundOn));
+      playUI('toggle');
+    });
+    document.getElementById('volumeRange').addEventListener('input', (e)=>{ masterGain.gain.value = parseFloat(e.target.value); });
+
+    function playUI(type){
+      if(!soundOn) return;
+      const t = audioCtx.currentTime;
+      if(type === 'toggle'){
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        o.type = 'sine';
+        o.frequency.setValueAtTime(520, t);
+        g.gain.setValueAtTime(0, t);
+        g.gain.linearRampToValueAtTime(0.12, t+0.005);
+        g.gain.exponentialRampToValueAtTime(0.0001, t+0.35);
+        o.connect(g); g.connect(masterGain);
+        o.start(t); o.stop(t+0.38);
+      }else if(type === 'click'){
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        o.type = 'triangle';
+        o.frequency.setValueAtTime(820, t);
+        g.gain.setValueAtTime(0, t);
+        g.gain.linearRampToValueAtTime(0.08, t+0.003);
+        g.gain.exponentialRampToValueAtTime(0.0001, t+0.12);
+        o.connect(g); g.connect(masterGain);
+        o.start(t); o.stop(t+0.12);
+      }else if(type === 'zoom'){
+        const o = audioCtx.createOscillator();
+        const o2 = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        o.type='sawtooth'; o.frequency.value=220;
+        o2.type='sine'; o2.frequency.value=660;
+        g.gain.setValueAtTime(0.001,t);
+        g.gain.linearRampToValueAtTime(0.14,t+0.06);
+        g.gain.exponentialRampToValueAtTime(0.0001,t+0.4);
+        o.connect(g); o2.connect(g); g.connect(masterGain);
+        o.start(t); o2.start(t); o.stop(t+0.42); o2.stop(t+0.42);
+      }
+    }
+
+    // Wishlist microinteraction
+    const wishlistBtn = document.getElementById('wishlistBtn');
+    wishlistBtn.addEventListener('click', ()=>{
+      wishlistBtn.classList.toggle('active');
+      const pressed = wishlistBtn.classList.contains('active');
+      wishlistBtn.setAttribute('aria-pressed', String(pressed));
+      playUI('click');
+      gsap.fromTo(wishlistBtn, { scale:0.94 }, { scale:1.06, duration:0.28, ease:'elastic.out(1,0.6)' });
+    });
+
+    // CTA navigation
+    document.getElementById('ctaExplore').addEventListener('click', ()=>{ playUI('click'); window.location.href='collections.html'; });
+    document.getElementById('ctaShowroom').addEventListener('click', ()=>{ playUI('click'); window.location.href='showroom.html'; });
+
+    // Page year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Start
+    initScene();
+    requestAnimationFrame(animate);
+
+    // Clean-up on unload
+    window.addEventListener('beforeunload', ()=>{ if(audioCtx && audioCtx.state !== 'closed') audioCtx.close(); });
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+This is a placeholder file for the sofa model.
+Replace this file with your optimized GLB at models/sofa.glb
+
+Current Three.js code will attempt to load ./models/sofa.glb and fall back to a procedurally generated luxury piece if the file is not found.
