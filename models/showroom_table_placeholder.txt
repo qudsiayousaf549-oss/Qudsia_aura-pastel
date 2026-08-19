@@ -1,0 +1,1 @@
+Placeholder for showroom coffee table model. Replace with models/showroom_table.glb

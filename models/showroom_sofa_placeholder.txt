@@ -1,0 +1,1 @@
+Placeholder for showroom sofa model. Replace with models/showroom_sofa.glb

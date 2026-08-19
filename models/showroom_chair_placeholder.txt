@@ -1,0 +1,1 @@
+Placeholder for showroom chair model. Replace with models/showroom_chair.glb
