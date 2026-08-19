@@ -1,0 +1,2 @@
+Placeholder: showroom photo image
+Replace with assets/images/showroom_photo_placeholder.jpg for Our Story hero

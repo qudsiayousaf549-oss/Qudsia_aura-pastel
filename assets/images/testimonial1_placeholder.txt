@@ -1,0 +1,2 @@
+Placeholder: testimonial image
+Replace with assets/images/testimonial1.jpg to use as a testimonial photo
